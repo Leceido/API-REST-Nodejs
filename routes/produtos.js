@@ -8,7 +8,6 @@ const Pedido = mongoose.model('pedidos')
 
 router.get('/', (req, res, next) => {
     Produto.find().then((result) => {
-        console.log(result.length);
         const response = {
             quantidade: result.lenght,
             produtos: result.map(prod => {
