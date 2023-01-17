@@ -9,6 +9,9 @@ const Produto = new Schema({
     preco: {
         type: Number,
         required: true
+    },
+    imagem_produto: {
+        type: String,
     }
 })
 

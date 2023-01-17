@@ -7,13 +7,18 @@ require('../models/Pedido')
 const Pedido = mongoose.model('pedidos')
 
 router.get('/', (req, res, next) => {
-    Pedido.find().then((result) => {
+    Pedido.find().populate('id_produto').then((result) => {
         const response = {
             quantidade: result.lenght,
             pedidos: result.map(pedido => {
                 return {
                     pedido: pedido._id,
-                    id_produto: pedido.id_produto,
+                    produto: {
+                        id_produto: pedido.id_produto._id,
+                        nome: pedido.id_produto.nome,
+                        preco: pedido.id_produto.preco,
+                        url_produto: `http://localhost:3000/produtos/${pedido.id_produto._id}`
+                    },
                     quantidade: pedido.quantidade,
                     request: {
                         tipo: 'GET',

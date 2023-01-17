@@ -5,6 +5,19 @@ require('../models/Produto')
 const Produto = mongoose.model('produtos')
 require('../models/Pedido')
 const Pedido = mongoose.model('pedidos')
+const multer = require('multer')
+const path = require('path')
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, './uploads/')
+    },
+    filename: function(req, file, cb) {
+        let data = new Date().toISOString().replace(/:/g, '-') + '-';
+        cb(null, data + file.originalname );
+    }
+})
+const upload = multer({storage})
 
 router.get('/', (req, res, next) => {
     Produto.find().then((result) => {
@@ -15,6 +28,7 @@ router.get('/', (req, res, next) => {
                     id_produto: prod._id,
                     nome: prod.nome,
                     preco: prod.preco,
+                    produto_imagem: prod.imagem_produto,
                     request: {
                         tipo: 'GET',
                         descricao: 'Retorna um produto especifico',
@@ -31,10 +45,12 @@ router.get('/', (req, res, next) => {
     })
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', upload.single('produto_imagem'), (req, res, next) => {
+    console.log(req.file);
     const novoProduto = {
         nome: req.body.nome,
-        preco: req.body.preco
+        preco: req.body.preco,
+        imagem_produto: `/uploads/${req.file.filename}`
     }
 
     new Produto(novoProduto).save().then(() => {
