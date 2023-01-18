@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 
 const rotaProdutos = require('./routes/produtos')
 const rotaPedidos = require('./routes/pedidos')
+const rotaUsuarios = require('./routes/usuarios')
 
 const mongoose = require('mongoose')
 require('./models/Produto')
@@ -26,6 +27,7 @@ mongoose.connect("mongodb://127.0.0.1/ecommerce").then(() => {
     console.log("Erro ao tentar se conectar com o mongoDB" + err);
 })
 
+app.use('/usuarios', rotaUsuarios)
 app.use('/produtos', rotaProdutos)
 app.use('/pedidos', rotaPedidos)
 
