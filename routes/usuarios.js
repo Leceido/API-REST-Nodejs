@@ -6,73 +6,11 @@ require('../models/Usuario')
 const Usuario = mongoose.model('usuarios')
 const jwt = require('jsonwebtoken')
 
+const UsuariosController = require('../controllers/usuarios-controller')
 
-router.post('/cadastro', (req, res, next) => {
 
-    Usuario.findOne({user: req.body.user}).then((usuario) => {
-        if(usuario){
-            return res.status(409).send({
-                error: "Este usuario ja tem uma conta"
-            })
-        } else {
-            const novoUsuario = new Usuario({
-                nome: req.body.nome,
-                user: req.body.user,
-                email: req.body.email,
-                senha: req.body.senha
-            })
-        
-            bcrypt.hash(novoUsuario.senha, 10, (errBcrypt, hash) => {
-                if(errBcrypt){
-                    return res.status(500).send({
-                        error: errBcrypt
-                    })
-                }
-        
-                novoUsuario.senha = hash
-        
-                novoUsuario.save().then(() => {
-                    res.status(201).send({
-                        mensagem: "Usuario criado com sucesso!",
-                        usuarioCriado: {
-                            email: req.body.email,
-                            user: req.body.user
-                        }
-                    })
-                }).catch((err) => {
-                    res.status(500).send({
-                        error: "Ocorreu um erro ao tentar criar o usuario!"
-                    })
-                })
-            })
-        }
-    })
-})
+router.post('/cadastro', UsuariosController.cadastro)
 
-router.post('/login', (req, res, next) => {
-    Usuario.findOne({user: req.body.user}).then((usuario) => {
-        if(!usuario) {
-            return res.status(401).send({mensagem: "Falha na autenticacao"})
-        }
-        bcrypt.compare(req.body.senha, usuario.senha, (err, result) => {
-            if(result){
-                const token = jwt.sign({
-                    id_usuario: usuario._id,
-                    email: usuario.email
-                },
-                process.env.JWT_KEY,
-                {
-                    expiresIn: "1h"
-                })
-                return res.status(200).send({
-                    mensagem: "Usuario autenticado com sucesso!",
-                    token: token
-                })
-            } else {
-                return res.status(401).send({mensagem: "Falha na autenticacao"})
-            }
-        })
-    })
-})
+router.post('/login', UsuariosController.login)
 
 module.exports = router
