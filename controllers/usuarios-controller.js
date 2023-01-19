@@ -4,13 +4,13 @@ require('../models/Usuario')
 const Usuario = mongoose.model('usuarios')
 const jwt = require('jsonwebtoken')
 
-exports.cadastro = (req, res, next) => {
+exports.cadastro = async (req, res, next) => {
 
-    Usuario.findOne({user: req.body.user}).then((usuario) => {
-        if(usuario){
-            return res.status(409).send({
-                error: "Este usuario ja tem uma conta"
-            })
+    try {
+        const usuario = await Usuario.findOne({user: req.body.user})
+
+        if (usuario) {
+            return res.status(409).send({error: "Este usuario ja tem uma conta"})
         } else {
             const novoUsuario = new Usuario({
                 nome: req.body.nome,
@@ -27,23 +27,21 @@ exports.cadastro = (req, res, next) => {
                 }
         
                 novoUsuario.senha = hash
-        
-                novoUsuario.save().then(() => {
-                    res.status(201).send({
-                        mensagem: "Usuario criado com sucesso!",
-                        usuarioCriado: {
-                            email: req.body.email,
-                            user: req.body.user
-                        }
-                    })
-                }).catch((err) => {
-                    res.status(500).send({
-                        error: "Ocorreu um erro ao tentar criar o usuario!"
-                    })
+
+                novoUsuario.save()
+
+                res.status(201).send({
+                    mensagem: "Usuario criado com sucesso!",
+                    usuarioCriado: {
+                        email: req.body.email,
+                        user: req.body.user
+                    }
                 })
-            })
+            })    
         }
-    })
+    } catch (err) {
+        res.status(500).send({error: "Ocorreu um erro ao tentar criar o usuario!"})
+    }
 }
 
 exports.login = (req, res, next) => {

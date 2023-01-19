@@ -2,9 +2,9 @@ const mongoose = require('mongoose')
 require('../models/Produto')
 const Produto = mongoose.model('produtos')
 
-
-exports.getProdutos = (req, res, next) => {
-    Produto.find().then((result) => {
+exports.getProdutos = async (req, res, next) => {
+    try {
+        const result = await Produto.find()
         const response = {
             quantidade: result.lenght,
             produtos: result.map(prod => {
@@ -22,11 +22,9 @@ exports.getProdutos = (req, res, next) => {
             })
         }
         res.status(200).send({response})
-    }).catch((err) => {
-        res.status(500).send({
-            error: err
-        })
-    })
+    } catch (err) {
+        res.status(500).send({error: err})
+    }
 }
 
 exports.postProdutos = (req, res, next) => {
@@ -56,9 +54,10 @@ exports.postProdutos = (req, res, next) => {
     })
 }
 
-exports.getProduto = (req, res, next) => {
+exports.getProduto = async (req, res, next) => {
     const id = req.params.id_produto
-    Produto.find({_id: id}).then((produto) => {
+    try {
+        const produto = await Produto.find({_id: id})
         res.status(200).send({
             produto: produto,
             request: {
@@ -67,38 +66,32 @@ exports.getProduto = (req, res, next) => {
                 url: 'http://localhost:3000/produtos/'
             }
         })
-    }).catch((err) => {
-        res.status(500).send({
-            error: 'Produto nao econtrado'
-        })
-    })
+    } catch (err) {
+        res.status(500).send({error: 'Produto nao econtrado'})
+    }
 }
 
-exports.patchProduto = (req, res, next) => {
-    Produto.findOne({_id: req.body.id}).then((produto) => {
+exports.patchProduto = async (req, res, next) => {
+    try {
+        const produto = await Produto.findOne({_id: req.body.id})
+
         produto.nome = req.body.nome
         produto.preco = req.body.preco
 
-        produto.save().then(() => {
-            res.status(201).send({
-                mensagem: 'Produto Editado',
-                produto: produto,
-                request: {
-                    tipo: 'GET',
-                    descricao: 'Retorna todos os produtos',
-                    url: 'http://localhost:3000/produtos/'
-                }
-            })
-        }).catch((err) => {
-            res.status(500).send({
-                error: err
-            })
+        await produto.save()
+
+        res.status(201).send({
+            mensagem: 'Produto Editado',
+            produto: produto,
+            request: {
+                tipo: 'GET',
+                descricao: 'Retorna todos os produtos',
+                url: 'http://localhost:3000/produtos/'
+            }
         })
-    }).catch((err) => {
-        res.status(500).send({
-            error: err
-        })
-    })
+    } catch (err) {
+        res.status(500).send({error: err})
+    }
 }
 
 exports.deleteProduto = (req, res, next) => {
