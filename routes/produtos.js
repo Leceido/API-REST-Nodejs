@@ -7,6 +7,7 @@ require('../models/Pedido')
 const Pedido = mongoose.model('pedidos')
 const multer = require('multer')
 const path = require('path')
+const login = require('../helpers/login')
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -45,7 +46,8 @@ router.get('/', (req, res, next) => {
     })
 })
 
-router.post('/', upload.single('produto_imagem'), (req, res, next) => {
+router.post('/', login, upload.single('produto_imagem'), (req, res, next) => {
+    console.log(req.usuario);
     console.log(req.file);
     const novoProduto = {
         nome: req.body.nome,
@@ -89,7 +91,7 @@ router.get('/:id_produto', (req, res, next) => {
     })
 })
 
-router.patch('/', (req, res, next) => {
+router.patch('/', login, (req, res, next) => {
     Produto.findOne({_id: req.body.id}).then((produto) => {
         produto.nome = req.body.nome
         produto.preco = req.body.preco
@@ -116,7 +118,7 @@ router.patch('/', (req, res, next) => {
     })
 })
 
-router.delete('/', (req, res, next) => {
+router.delete('/', login, (req, res, next) => {
     Produto.deleteOne({_id: req.body.id}).then(() => {
         res.status(201).send({
             mensagem: 'Produto Excluido',
