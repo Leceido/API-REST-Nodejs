@@ -37,7 +37,7 @@ exports.postPedidos = (req, res, next) => {
         id_produto: req.body.id_produto,
         quantidade: req.body.quantidade
     }
-
+    
     new Pedido(novoPedido).save().then(() => {
         const response = {
             mensagem: "Pedido inserido",
