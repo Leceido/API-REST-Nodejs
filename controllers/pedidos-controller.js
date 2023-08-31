@@ -61,6 +61,11 @@ exports.getPedido = (req, res, next) => {
     Pedido.find({_id: id}).then((pedido) => {
         res.status(200).send({
             pedido: pedido,
+            /*produto: {
+                id_produto: pedido.id_produto._id,
+                nome: pedido.id_produto.nome,
+                preco: pedido.id_produto.preco,
+            },*/
             request: {
                 tipo: 'GET',
                 descricao: 'Retorna todos os pedidos',
@@ -69,7 +74,8 @@ exports.getPedido = (req, res, next) => {
         })
     }).catch((err) => {
         res.status(500).send({
-            error: 'Pedido nao econtrado'
+            error: 'Pedido nao econtrado',
+            err
         })
     })
 }

@@ -47,24 +47,29 @@ exports.cadastro = async (req, res, next) => {
 exports.login = (req, res, next) => {
     Usuario.findOne({user: req.body.user}).then((usuario) => {
         if(!usuario) {
-            return res.status(401).send({mensagem: "Falha na autenticacao"})
+            return res.status(401).send({mensagem: "Falha na autenticacao, usuario não encontrado!!"})
         }
         bcrypt.compare(req.body.senha, usuario.senha, (err, result) => {
             if(result){
-                const token = jwt.sign({
-                    id_usuario: usuario._id,
-                    email: usuario.email
-                },
-                process.env.JWT_KEY,
-                {
-                    expiresIn: "1h"
-                })
-                return res.status(200).send({
-                    mensagem: "Usuario autenticado com sucesso!",
-                    token: token
-                })
+                try {
+                    const token = jwt.sign({
+                        id_usuario: usuario._id,
+                        email: usuario.email
+                    },
+                    `${process.env.JWT_KEY}`,
+                    {
+                        expiresIn: "1h"
+                    })
+                    return res.status(200).send({
+                        mensagem: "Usuario autenticado com sucesso!",
+                        token: token
+                    })
+                } catch (err) {
+                    res.status(500).send({error: "Ocorreu um erro ao criar a KEY JWT"})
+                }
+                
             } else {
-                return res.status(401).send({mensagem: "Falha na autenticacao"})
+                return res.status(401).send({mensagem: "Falha na autenticacao, usuario ou senha incorreto"})
             }
         })
     })
