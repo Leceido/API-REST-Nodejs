@@ -21,7 +21,7 @@ app.use(bodyParser.json())
 
 mongoose.set('strictQuery', false)
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://127.0.0.1/ecommerce").then(() => {
+mongoose.connect("mongodb://meu-mongodb:27017/ecommerce").then(() => {
     console.log("Conectado ao mongoDB");
 }).catch((err) => {
     console.log("Erro ao tentar se conectar com o mongoDB" + err);

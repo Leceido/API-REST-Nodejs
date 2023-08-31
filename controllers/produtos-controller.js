@@ -32,8 +32,7 @@ exports.postProdutos = (req, res, next) => {
     console.log(req.file);
     const novoProduto = {
         nome: req.body.nome,
-        preco: req.body.preco,
-        imagem_produto: `/uploads/${req.file.filename}`
+        preco: req.body.preco
     }
 
     new Produto(novoProduto).save().then(() => {
