@@ -32,7 +32,7 @@ app.use('/produtos', rotaProdutos)
 app.use('/pedidos', rotaPedidos)
 
 app.use((req, res, next) => {
-    const erro = new Error('Nao encontrado')
+    const erro = new Error('404 ERROR - Nao encontrado')
     erro.status = 404
     next(erro)
 })
