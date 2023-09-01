@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+require('dotenv').config()
 
 const rotaProdutos = require('./routes/produtos')
 const rotaPedidos = require('./routes/pedidos')
@@ -21,7 +22,7 @@ app.use(bodyParser.json())
 
 mongoose.set('strictQuery', false)
 mongoose.Promise = global.Promise
-mongoose.connect("mongodb://meu-mongodb:27017/ecommerce").then(() => {
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.tx76yln.mongodb.net/?retryWrites=true&w=majority`).then(() => {
     console.log("Conectado ao mongoDB");
 }).catch((err) => {
     console.log("Erro ao tentar se conectar com o mongoDB" + err);
