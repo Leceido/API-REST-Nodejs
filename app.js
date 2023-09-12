@@ -3,6 +3,7 @@ const app = express()
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 require('dotenv').config()
+const cors = require('cors')
 
 const rotaProdutos = require('./routes/produtos')
 const rotaPedidos = require('./routes/pedidos')
@@ -19,6 +20,7 @@ app.use(morgan('dev'))
 app.use('/uploads', express.static('uploads'))
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
+app.use(cors())
 
 mongoose.set('strictQuery', false)
 mongoose.Promise = global.Promise
